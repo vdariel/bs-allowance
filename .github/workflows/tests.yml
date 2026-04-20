@@ -21,6 +21,29 @@ jobs:
       matrix:
         php-version: ['8.3', '8.4', '8.5']
 
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: postgres
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -31,6 +54,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
           coverage: xdebug
+          extensions: pdo_pgsql, pgsql
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -51,6 +75,9 @@ jobs:
 
       - name: Build Assets
         run: npm run build
+
+      - name: Run Migrations
+        run: php artisan migrate --force
 
       - name: Tests
         run: ./vendor/bin/pest
