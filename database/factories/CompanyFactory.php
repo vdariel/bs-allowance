@@ -3,16 +3,22 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class CompanyFactory extends Factory
 {
     public function definition(): array
     {
+        $companyName = ucwords($this->faker->unique()->randomElement([
+            $this->faker->colorName(),
+            $this->faker->word,
+        ]).' '.$this->faker->word());
+
         return [
-            'name' => $this->faker->company(),
-            'slug' => $this->faker->slug(),
+            'name' => $companyName,
+            'slug' => Str::kebab(strtolower($companyName)),
             'email' => $this->faker->companyEmail(),
-            'mobile' => $this->faker->phoneNumber(),
+            'mobile' => $this->faker->e164PhoneNumber(),
         ];
     }
 

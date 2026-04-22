@@ -1,19 +1,14 @@
 <?php
 
 use App\Models\User;
-use App\Models\Company;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Features;
 
-pest();
-
 beforeEach(function () {
     $this->skipUnlessFortifyHas(Features::emailVerification());
-
-    Company::factory()->create(['slug' => 'main', 'active' => true, 'mobile' => '123456789']);
 });
 
 test('email verification screen can be rendered', function () {

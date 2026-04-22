@@ -1,15 +1,9 @@
 <?php
 
-use App\Models\Company;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Fortify\Features;
-
-pest()->use(DatabaseTransactions::class);
 
 beforeEach(function () {
     $this->skipUnlessFortifyHas(Features::registration());
-
-    Company::factory()->create(['slug' => 'main', 'active' => true, 'mobile' => '123456789']);
 });
 
 test('registration screen can be rendered', function () {

@@ -7,8 +7,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
-pest()->use(DatabaseTransactions::class);
-
 beforeEach(function () {
     $this->skipUnlessFortifyHas(Features::resetPasswords());
 

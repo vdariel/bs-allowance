@@ -1,16 +1,9 @@
 <?php
 
 use App\Models\User;
-use App\Models\Company;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Features;
-
-pest()->use(DatabaseTransactions::class);
-
-beforeEach(function () {
-    Company::factory()->create(['slug' => 'main', 'active' => true, 'mobile' => '123456789']);
-});
 
 test('login screen can be rendered', function () {
     $response = $this->get(route('login', ['company' => 'main']));

@@ -5,8 +5,6 @@ use App\Models\Company;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Inertia\Testing\AssertableInertia as Assert;
 
-pest()->use(DatabaseTransactions::class);
-
 beforeEach(function () {
     Company::factory()->create(['slug' => 'main', 'active' => true, 'mobile' => '123456789']);
 });
