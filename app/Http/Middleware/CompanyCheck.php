@@ -16,12 +16,10 @@ class CompanyCheck
      */
     public function handle(Request $request, Closure $next): Response
     {
+        /** @var CompanyModel $company */
         $company = $request->route('company');
 
-        if ($request->route()->hasParameter('company')) {
-            if ($company instanceof CompanyModel && $company->active) {
-                return $next($request);
-            }
+        if ($request->route()->hasParameter('company') && (is_null($company) || !$company->active)) {
             abort(404);
         }
 

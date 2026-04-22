@@ -1,11 +1,19 @@
 <?php
 
 use App\Models\User;
+use App\Models\Company;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Features;
 
+pest()->use(DatabaseTransactions::class);
+
+beforeEach(function () {
+    Company::factory()->create(['slug' => 'main', 'active' => true, 'mobile' => '123456789']);
+});
+
 test('login screen can be rendered', function () {
-    $response = $this->get(route('login'));
+    $response = $this->get(route('login', ['company' => 'main']));
 
     $response->assertOk();
 });
@@ -13,13 +21,13 @@ test('login screen can be rendered', function () {
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 
-    $response = $this->post(route('login.store'), [
+    $response = $this->post(route('login.store', ['company' => 'main']), [
         'email' => $user->email,
         'password' => 'password',
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('dashboard', ['company' => 'main'], absolute: false));
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {
@@ -38,7 +46,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
         'two_factor_confirmed_at' => now(),
     ])->save();
 
-    $response = $this->post(route('login'), [
+    $response = $this->post(route('login', ['company' => 'main']), [
         'email' => $user->email,
         'password' => 'password',
     ]);
@@ -51,7 +59,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
 test('users can not authenticate with invalid password', function () {
     $user = User::factory()->create();
 
-    $this->post(route('login.store'), [
+    $this->post(route('login.store', ['company' => 'main']), [
         'email' => $user->email,
         'password' => 'wrong-password',
     ]);
@@ -62,7 +70,7 @@ test('users can not authenticate with invalid password', function () {
 test('users can logout', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->post(route('logout'));
+    $response = $this->actingAs($user)->post(route('logout', ['company' => 'main']));
 
     $this->assertGuest();
     $response->assertRedirect(route('home'));
@@ -73,7 +81,7 @@ test('users are rate limited', function () {
 
     RateLimiter::increment(md5('login'.implode('|', [$user->email, '127.0.0.1'])), amount: 5);
 
-    $response = $this->post(route('login.store'), [
+    $response = $this->post(route('login.store', ['company' => 'main']), [
         'email' => $user->email,
         'password' => 'wrong-password',
     ]);

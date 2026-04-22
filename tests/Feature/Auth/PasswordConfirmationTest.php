@@ -1,12 +1,20 @@
 <?php
 
 use App\Models\User;
+use App\Models\Company;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Inertia\Testing\AssertableInertia as Assert;
+
+pest()->use(DatabaseTransactions::class);
+
+beforeEach(function () {
+    Company::factory()->create(['slug' => 'main', 'active' => true, 'mobile' => '123456789']);
+});
 
 test('confirm password screen can be rendered', function () {
     $user = User::factory()->create();
 
-    $response = $this->actingAs($user)->get(route('password.confirm'));
+    $response = $this->actingAs($user)->get(route('password.confirm', ['company' => 'main']));
 
     $response->assertOk();
 
@@ -16,7 +24,7 @@ test('confirm password screen can be rendered', function () {
 });
 
 test('password confirmation requires authentication', function () {
-    $response = $this->get(route('password.confirm'));
+    $response = $this->get(route('password.confirm', ['company' => 'main']));
 
-    $response->assertRedirect(route('login'));
+    $response->assertRedirect(route('login', ['company' => 'main']));
 });

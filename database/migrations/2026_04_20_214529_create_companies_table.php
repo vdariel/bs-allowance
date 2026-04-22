@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug', 20);
             $table->string('email', 50);
             $table->string('mobile', 15)->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->boolean('active')->default(true);
             $table->timestamps();
             $table->softDeletes();
 

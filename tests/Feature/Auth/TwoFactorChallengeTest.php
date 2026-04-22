@@ -9,7 +9,7 @@ beforeEach(function () {
 });
 
 test('two factor challenge redirects to login when not authenticated', function () {
-    $response = $this->get(route('two-factor.login'));
+    $response = $this->get(route('two-factor.login', ['company' => 'main']));
 
     $response->assertRedirect(route('login'));
 });
@@ -28,12 +28,12 @@ test('two factor challenge can be rendered', function () {
         'two_factor_confirmed_at' => now(),
     ])->save();
 
-    $this->post(route('login'), [
+    $this->post(route('login', ['company' => 'main']), [
         'email' => $user->email,
         'password' => 'password',
     ]);
 
-    $this->get(route('two-factor.login'))
+    $this->get(route('two-factor.login', ['company' => 'main']))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('auth/TwoFactorChallenge'),

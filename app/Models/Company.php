@@ -34,6 +34,20 @@ class Company extends Model
         return 'slug';
     }
 
+    /**
+     * Resolve the route binding for a candidate value.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return $this->where($field ?? $this->getRouteKeyName(), $value)
+            ->active()
+            ->first();
+    }
+
     public function scopeActive($query)
     {
         return $query->where('active', true);
